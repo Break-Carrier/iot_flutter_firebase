@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/sensor_reading.dart';
 import '../models/time_filter.dart';
+import '../utils/map_converter.dart';
 import 'firebase_service.dart';
 
 /// Service pour gérer les lectures de capteurs
@@ -43,20 +44,23 @@ class SensorReadingService extends ChangeNotifier {
       _readingsSubscription =
           _firebaseService.getLatestEntriesStream(_path, limit).listen((event) {
         if (event.snapshot.exists) {
-          // Convertir le Map<Object?, Object?> en Map<String, dynamic> de façon sécurisée
-          final rawData = event.snapshot.value as Map<Object?, Object?>;
-          final Map<String, dynamic> data = {};
-
-          rawData.forEach((key, value) {
-            if (key is String && value is Map<Object?, Object?>) {
-              // Convertir les données internes pour chaque lecture
-              data[key] = Map<String, dynamic>.from(value.map(
-                (k, v) => MapEntry(k.toString(), v),
-              ));
+          try {
+            // Convertir les données de façon sécurisée
+            if (event.snapshot.value is Map) {
+              final rawData = event.snapshot.value as Map<Object?, Object?>;
+              final Map<String, dynamic> data = MapConverter.convertToStringDynamicMap(rawData);
+              
+              _processReadingsData(data);
+            } else {
+              debugPrint('⚠️ Les données reçues ne sont pas au format Map');
+              _readings = [];
+              _readingsStreamController.add(_readings);
+              notifyListeners();
             }
-          });
-
-          _processReadingsData(data);
+          } catch (e) {
+            debugPrint('❌ Erreur de conversion des données: $e');
+            _readingsStreamController.addError(e);
+          }
         } else {
           debugPrint('⚠️ No sensor readings data available');
           _readings = [];

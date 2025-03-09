@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/threshold_event.dart';
+import '../utils/map_converter.dart';
 import 'firebase_service.dart';
 
 /// Service pour gérer les événements de dépassement de seuil
@@ -39,20 +40,23 @@ class ThresholdEventService extends ChangeNotifier {
           .getLatestEntriesStream(_path, _limit)
           .listen((event) {
         if (event.snapshot.exists) {
-          // Convertir le Map<Object?, Object?> en Map<String, dynamic> de façon sécurisée
-          final rawData = event.snapshot.value as Map<Object?, Object?>;
-          final Map<String, dynamic> data = {};
-
-          rawData.forEach((key, value) {
-            if (key is String && value is Map<Object?, Object?>) {
-              // Convertir les données internes pour chaque événement
-              data[key] = Map<String, dynamic>.from(value.map(
-                (k, v) => MapEntry(k.toString(), v),
-              ));
+          try {
+            // Convertir les données de façon sécurisée
+            if (event.snapshot.value is Map) {
+              final rawData = event.snapshot.value as Map<Object?, Object?>;
+              final Map<String, dynamic> data = MapConverter.convertToStringDynamicMap(rawData);
+              
+              _processEventsData(data);
+            } else {
+              debugPrint('⚠️ Les données reçues ne sont pas au format Map');
+              _events = [];
+              _eventsStreamController.add(_events);
+              notifyListeners();
             }
-          });
-
-          _processEventsData(data);
+          } catch (e) {
+            debugPrint('❌ Erreur de conversion des données: $e');
+            _eventsStreamController.addError(e);
+          }
         } else {
           debugPrint('⚠️ No threshold events data available');
           _events = [];

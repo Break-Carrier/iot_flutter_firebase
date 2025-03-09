@@ -145,25 +145,50 @@ class SensorService extends ChangeNotifier {
       return;
     }
 
+    // Enregistrer l'état actuel avant la mise à jour
+    final currentState = _currentStateService!.currentState;
+    final oldHighThreshold = currentState?.thresholdHigh;
+    final oldLowThreshold = currentState?.thresholdLow;
+    final temperature = currentState?.temperature;
+
+    // Mettre à jour les seuils
     await _currentStateService!.updateThresholds(lowThreshold, highThreshold);
 
-    // Vérifier si la température actuelle dépasse les nouveaux seuils
-    final currentState = _currentStateService!.currentState;
-    if (currentState != null) {
-      // Si la température est hors limites, créer un événement
-      if (currentState.temperature > highThreshold) {
+    // Récupérer l'état actualisé après la mise à jour
+    final updatedState = _currentStateService!.currentState;
+
+    if (updatedState != null && temperature != null) {
+      // Déterminer le type d'événement si nécessaire
+      ThresholdEventType? eventType;
+
+      // Si la température dépasse maintenant le seuil, mais pas avant
+      if (oldHighThreshold != null && oldLowThreshold != null) {
+        bool wasOverThresholdBefore =
+            temperature > oldHighThreshold || temperature < oldLowThreshold;
+        bool isOverThresholdNow =
+            temperature > highThreshold || temperature < lowThreshold;
+
+        // Si le statut de dépassement a changé suite à la modification des seuils
+        if (!wasOverThresholdBefore && isOverThresholdNow) {
+          // Déterminer quel seuil est dépassé
+          if (temperature > highThreshold) {
+            eventType = ThresholdEventType.exceeded;
+            debugPrint(
+                '🚨 Threshold crossed due to threshold change: Temperature exceeds new high threshold');
+          } else if (temperature < lowThreshold) {
+            eventType = ThresholdEventType.exceeded;
+            debugPrint(
+                '🚨 Threshold crossed due to threshold change: Temperature below new low threshold');
+          }
+        }
+      }
+
+      // Créer un événement si nécessaire
+      if (eventType != null) {
         await _thresholdEventService!.createThresholdEvent(
-          temperature: currentState.temperature,
-          humidity: currentState.humidity,
-          eventType: ThresholdEventType.exceeded,
-          thresholdHigh: highThreshold,
-          thresholdLow: lowThreshold,
-        );
-      } else if (currentState.temperature < lowThreshold) {
-        await _thresholdEventService!.createThresholdEvent(
-          temperature: currentState.temperature,
-          humidity: currentState.humidity,
-          eventType: ThresholdEventType.exceeded,
+          temperature: temperature,
+          humidity: updatedState.humidity,
+          eventType: eventType,
           thresholdHigh: highThreshold,
           thresholdLow: lowThreshold,
         );

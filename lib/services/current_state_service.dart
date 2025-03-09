@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/current_state.dart';
+import '../utils/map_converter.dart';
 import 'firebase_service.dart';
 
 /// Service pour gérer l'état actuel des capteurs
@@ -32,17 +33,26 @@ class CurrentStateService extends ChangeNotifier {
       _stateSubscription =
           _firebaseService.getDataStream(_path).listen((event) {
         if (event.snapshot.exists) {
-          // Convertir le Map<Object?, Object?> en Map<String, dynamic> de façon sécurisée
-          final rawData = event.snapshot.value as Map<Object?, Object?>;
-          final Map<String, dynamic> data = Map<String, dynamic>.from(
-            rawData.map((key, value) => MapEntry(key.toString(), value)),
-          );
+          try {
+            // Convertir les données de façon sécurisée
+            if (event.snapshot.value is Map) {
+              final rawData = event.snapshot.value as Map<Object?, Object?>;
+              final Map<String, dynamic> data =
+                  MapConverter.convertToStringDynamicMap(rawData);
 
-          _currentState = CurrentState.fromRealtimeDB(data);
-          _stateStreamController.add(_currentState);
-          notifyListeners();
-          debugPrint(
-              '📊 Current state updated: ${_currentState?.temperature}°C, ${_currentState?.humidity}%');
+              _currentState = CurrentState.fromRealtimeDB(data);
+              _stateStreamController.add(_currentState);
+              notifyListeners();
+              debugPrint(
+                  '📊 Current state updated: ${_currentState?.temperature}°C, ${_currentState?.humidity}%');
+            } else {
+              debugPrint('⚠️ Les données reçues ne sont pas au format Map');
+              _stateStreamController.add(null);
+            }
+          } catch (e) {
+            debugPrint('❌ Erreur de conversion des données: $e');
+            _stateStreamController.addError(e);
+          }
         } else {
           debugPrint('⚠️ No current state data available');
           _stateStreamController.add(null);
@@ -83,14 +93,25 @@ class CurrentStateService extends ChangeNotifier {
         throw ArgumentError('Le seuil bas doit être inférieur au seuil haut');
       }
 
-      await _firebaseService.updateData(_path, {
+      // Vérifier si la température actuelle dépasse les nouveaux seuils
+      bool isOverThreshold = false;
+      if (_currentState != null) {
+        isOverThreshold = _currentState!.temperature > highThreshold ||
+            _currentState!.temperature < lowThreshold;
+      }
+
+      // Préparer les données à mettre à jour
+      final updateData = {
         'threshold_low': lowThreshold,
         'threshold_high': highThreshold,
         'last_update': DateTime.now().millisecondsSinceEpoch,
-      });
+        'is_over_threshold': isOverThreshold,
+      };
+
+      await _firebaseService.updateData(_path, updateData);
 
       debugPrint(
-          '✅ Thresholds updated: low=$lowThreshold, high=$highThreshold');
+          '✅ Thresholds updated: low=$lowThreshold, high=$highThreshold, isOverThreshold=$isOverThreshold');
 
       // Actualiser l'état actuel
       await getCurrentState();
