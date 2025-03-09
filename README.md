@@ -12,14 +12,6 @@
 10. Contribution
 11. Licence
 
-Je vais baser mon contenu sur les fichiers que j'ai pu examiner, notamment:
-
-- Les services (firebase_service.dart, sensor_service.dart, current_state_service.dart)
-- Le widget de configuration de seuil
-- La structure générale de l'application
-
-Je vais inclure des détails techniques mais aussi rendre le document accessible pour un nouveau développeur qui prendrait en main le projet.</think># Application IoT Monitoring
-
 ## Présentation
 
 Cette application Flutter permet de surveiller et configurer un système IoT connecté (DHT11) en temps réel. Elle se connecte à une base de données Firebase Realtime Database pour afficher les données de température et d'humidité, visualiser leur évolution sur le temps, et configurer des seuils d'alerte avec hystérésis.
