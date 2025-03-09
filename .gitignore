@@ -98,3 +98,6 @@ coverage/
 .tmp/
 *.tmp
 *.bak
+
+.cursor
+*.txt
