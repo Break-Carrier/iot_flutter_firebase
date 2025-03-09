@@ -55,16 +55,33 @@ class CurrentStateWidget extends StatelessWidget {
   }
 
   Widget _buildLoadingIndicator() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 8),
-            Text('Chargement des données...'),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.withAlpha(30),
+              shape: BoxShape.circle,
+            ),
+            child: const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Chargement des données...',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -89,23 +106,46 @@ class CurrentStateWidget extends StatelessWidget {
   }
 
   Widget _buildNoDataDisplay() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Icon(Icons.info_outline, color: Colors.amber, size: 48),
-            SizedBox(height: 8),
-            Text(
-              'Aucune donnée disponible',
-              style: TextStyle(fontWeight: FontWeight.bold),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.amber.withAlpha(15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.amber.withAlpha(50)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.amber.withAlpha(30),
+              shape: BoxShape.circle,
             ),
-            Text(
-              'Appuyez sur "Actualiser" pour récupérer les données',
-              textAlign: TextAlign.center,
+            child: const Icon(
+              Icons.info_outline,
+              color: Colors.amber,
+              size: 40,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Aucune donnée disponible',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Utilisez le geste de glisser vers le bas pour actualiser les données',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -117,129 +157,211 @@ class CurrentStateWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Card(
-          color: Colors.red.withAlpha(26),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.red.withAlpha(77), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.red.withAlpha(50),
+              width: 1.5,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: _buildMeasurementRow(
-              context,
-              icon: Icons.thermostat,
-              label: 'Température',
-              value: '${state.temperature.toStringAsFixed(1)}°C',
-              color: _getTemperatureColor(state),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.thermostat,
+                    color: _getTemperatureColor(state),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    'Température',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                Text(
+                  '${state.temperature.toStringAsFixed(1)}°C',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: _getTemperatureColor(state),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        Card(
-          color: Colors.blue.withAlpha(26),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.blue.withAlpha(77), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.blue.withAlpha(50),
+              width: 1.5,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: _buildMeasurementRow(
-              context,
-              icon: Icons.water_drop,
-              label: 'Humidité',
-              value: '${state.humidity.toStringAsFixed(1)}%',
-              color: Colors.blue,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.water_drop,
+                    color: Colors.blue,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    'Humidité',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                Text(
+                  '${state.humidity.toStringAsFixed(1)}%',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        _buildThresholdRow(context, state),
-        const SizedBox(height: 12),
-        Text(
-          'Dernière mise à jour: $lastUpdate',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: Border.all(
+              color: _getStatusColor(state).withAlpha(50),
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(state).withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _getStatusIcon(state),
+                    color: _getStatusColor(state),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    'État',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(state).withAlpha(30),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _getStatusColor(state).withAlpha(50),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getStatusIcon(state),
+                        color: _getStatusColor(state),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _getStatusText(state),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _getStatusColor(state),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildMeasurementRow(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[700],
-          ),
-        ),
-        const Spacer(),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildThresholdRow(BuildContext context, CurrentState state) {
-    String statusText;
-    Color statusColor;
-    IconData statusIcon;
-
-    if (state.isHighTemperature) {
-      statusText = 'Température élevée';
-      statusColor = Colors.red;
-      statusIcon = Icons.keyboard_arrow_up;
-    } else if (state.isLowTemperature) {
-      statusText = 'Température basse';
-      statusColor = Colors.blue;
-      statusIcon = Icons.keyboard_arrow_down;
-    } else {
-      statusText = 'Température normale';
-      statusColor = Colors.green;
-      statusIcon = Icons.check_circle;
-    }
-
-    return Row(
-      children: [
-        const Text(
-          'État: ',
-          style: TextStyle(fontSize: 16),
-        ),
-        const SizedBox(width: 8),
-        Chip(
-          avatar: Icon(statusIcon, color: Colors.white, size: 16),
-          label: Text(
-            statusText,
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: statusColor,
-        ),
-        const Spacer(),
-        Text(
-          'Seuils: ${state.thresholdLow.toStringAsFixed(1)} - ${state.thresholdHigh.toStringAsFixed(1)}°C',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.update,
+              size: 14,
+              color: Colors.grey[600],
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'Dernière mise à jour: $lastUpdate',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -252,6 +374,36 @@ class CurrentStateWidget extends StatelessWidget {
       return Colors.blue;
     } else {
       return Colors.green;
+    }
+  }
+
+  Color _getStatusColor(CurrentState state) {
+    if (state.isHighTemperature) {
+      return Colors.red;
+    } else if (state.isLowTemperature) {
+      return Colors.blue;
+    } else {
+      return Colors.green;
+    }
+  }
+
+  IconData _getStatusIcon(CurrentState state) {
+    if (state.isHighTemperature) {
+      return Icons.thermostat;
+    } else if (state.isLowTemperature) {
+      return Icons.ac_unit;
+    } else {
+      return Icons.check_circle;
+    }
+  }
+
+  String _getStatusText(CurrentState state) {
+    if (state.isHighTemperature) {
+      return 'Température élevée';
+    } else if (state.isLowTemperature) {
+      return 'Température basse';
+    } else {
+      return 'Température normale';
     }
   }
 }

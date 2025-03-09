@@ -75,19 +75,42 @@ class _SensorReadingsChartState extends State<SensorReadingsChart> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        DropdownButton<TimeFilter>(
-          value: currentFilter,
-          onChanged: (TimeFilter? newValue) {
-            if (newValue != null) {
-              sensorService.setTimeFilter(newValue);
-            }
-          },
-          items: TimeFilter.values.map((TimeFilter filter) {
-            return DropdownMenuItem<TimeFilter>(
-              value: filter,
-              child: Text(filter.displayName),
-            );
-          }).toList(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor.withAlpha(30),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Theme.of(context).primaryColor.withAlpha(50),
+              width: 1,
+            ),
+          ),
+          child: DropdownButton<TimeFilter>(
+            value: currentFilter,
+            onChanged: (TimeFilter? newValue) {
+              if (newValue != null) {
+                sensorService.setTimeFilter(newValue);
+              }
+            },
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: Theme.of(context).primaryColor,
+            ),
+            underline: const SizedBox(),
+            borderRadius: BorderRadius.circular(10),
+            items: TimeFilter.values.map((TimeFilter filter) {
+              return DropdownMenuItem<TimeFilter>(
+                value: filter,
+                child: Text(
+                  filter.displayName,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );
@@ -173,29 +196,84 @@ class _SensorReadingsChartState extends State<SensorReadingsChart> {
   }
 
   Widget _buildLoadingIndicator() {
-    return const Center(
+    return SizedBox(
+      height: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 8),
-          Text('Chargement des données...'),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.withAlpha(30),
+              shape: BoxShape.circle,
+            ),
+            child: const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Chargement des données...',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildErrorDisplay(String error) {
-    return Center(
+    return Container(
+      height: 300,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.red.withAlpha(15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red.withAlpha(50)),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 48),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.withAlpha(30),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Erreur de chargement',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.red,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(
-            'Erreur: $error',
-            style: const TextStyle(color: Colors.red),
-            textAlign: TextAlign.center,
+          Flexible(
+            child: Text(
+              error,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 14,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
           ),
         ],
       ),
@@ -203,19 +281,46 @@ class _SensorReadingsChartState extends State<SensorReadingsChart> {
   }
 
   Widget _buildNoDataDisplay() {
-    return const Center(
+    return Container(
+      height: 300,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.blue.withAlpha(15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue.withAlpha(50)),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.analytics_outlined, color: Colors.amber, size: 48),
-          SizedBox(height: 8),
-          Text(
-            'Aucune donnée à afficher',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue.withAlpha(30),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.analytics_outlined,
+              color: Colors.blue,
+              size: 40,
+            ),
           ),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
+            'Aucune donnée à afficher',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
             'Essayez de changer le filtre temporel',
             textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
