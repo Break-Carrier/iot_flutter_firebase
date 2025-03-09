@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../firebase_options.dart';
+import '../utils/map_converter.dart';
 
 /// Service de base pour la communication avec Firebase Realtime Database
 class FirebaseService {
@@ -107,7 +108,14 @@ class FirebaseService {
     try {
       final snapshot = await _database.ref(path).get();
       if (snapshot.exists) {
-        return snapshot.value as Map<String, dynamic>?;
+        // Conversion sécurisée de Map<Object?, Object?> en Map<String, dynamic>
+        if (snapshot.value is Map) {
+          final rawData = snapshot.value as Map<Object?, Object?>;
+          return MapConverter.convertToStringDynamicMap(rawData);
+        } else {
+          debugPrint('⚠️ Les données à $path ne sont pas au format Map');
+          return null;
+        }
       } else {
         debugPrint('⚠️ Aucune donnée disponible à $path');
         return null;
@@ -131,7 +139,14 @@ class FirebaseService {
 
       final snapshot = await query.get();
       if (snapshot.exists) {
-        return snapshot.value as Map<String, dynamic>?;
+        // Conversion sécurisée de Map<Object?, Object?> en Map<String, dynamic>
+        if (snapshot.value is Map) {
+          final rawData = snapshot.value as Map<Object?, Object?>;
+          return MapConverter.convertToStringDynamicMap(rawData);
+        } else {
+          debugPrint('⚠️ Les données à $path ne sont pas au format Map');
+          return null;
+        }
       } else {
         debugPrint('⚠️ Aucune donnée disponible à $path');
         return null;

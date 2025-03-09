@@ -4,6 +4,7 @@ import 'dart:async';
 import '../widgets/current_state_widget.dart';
 import '../widgets/sensor_readings_chart.dart';
 import '../widgets/threshold_events_widget.dart';
+import '../widgets/threshold_config_widget.dart';
 import '../services/sensor_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -63,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: const [
                     CurrentStateWidget(),
+                    ThresholdConfigWidget(),
                     SensorReadingsChart(),
                     ThresholdEventsWidget(),
                   ],
