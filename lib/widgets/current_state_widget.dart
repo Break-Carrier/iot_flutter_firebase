@@ -18,26 +18,12 @@ class CurrentStateWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'État Actuel',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.refresh, size: 16),
-                  label: const Text('Actualiser'),
-                  onPressed: () => sensorService.refreshAllData(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
+            const Text(
+              'État Actuel',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             StreamBuilder<CurrentState?>(
@@ -131,20 +117,42 @@ class CurrentStateWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMeasurementRow(
-          context,
-          icon: Icons.thermostat,
-          label: 'Température',
-          value: '${state.temperature.toStringAsFixed(1)}°C',
-          color: _getTemperatureColor(state),
+        Card(
+          color: Colors.red.withAlpha(26),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.red.withAlpha(77), width: 1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: _buildMeasurementRow(
+              context,
+              icon: Icons.thermostat,
+              label: 'Température',
+              value: '${state.temperature.toStringAsFixed(1)}°C',
+              color: _getTemperatureColor(state),
+            ),
+          ),
         ),
         const SizedBox(height: 12),
-        _buildMeasurementRow(
-          context,
-          icon: Icons.water_drop,
-          label: 'Humidité',
-          value: '${state.humidity.toStringAsFixed(1)}%',
-          color: Colors.blue,
+        Card(
+          color: Colors.blue.withAlpha(26),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.blue.withAlpha(77), width: 1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: _buildMeasurementRow(
+              context,
+              icon: Icons.water_drop,
+              label: 'Humidité',
+              value: '${state.humidity.toStringAsFixed(1)}%',
+              color: Colors.blue,
+            ),
+          ),
         ),
         const SizedBox(height: 12),
         _buildThresholdRow(context, state),

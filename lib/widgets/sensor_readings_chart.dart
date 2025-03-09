@@ -97,28 +97,76 @@ class _SensorReadingsChartState extends State<SensorReadingsChart> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        FilterChip(
-          label: const Text('Température'),
-          selected: _showTemperature,
-          onSelected: (selected) {
-            setState(() {
-              _showTemperature = selected;
-            });
-          },
-          selectedColor: Colors.red.withAlpha(77),
-          checkmarkColor: Colors.red,
+        Card(
+          color: Colors.red.withAlpha(26),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.red.withAlpha(77), width: 1),
+          ),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                _showTemperature = !_showTemperature;
+              });
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(
+                    _showTemperature
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Température',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        const SizedBox(width: 16),
-        FilterChip(
-          label: const Text('Humidité'),
-          selected: _showHumidity,
-          onSelected: (selected) {
-            setState(() {
-              _showHumidity = selected;
-            });
-          },
-          selectedColor: Colors.blue.withAlpha(77),
-          checkmarkColor: Colors.blue,
+        const SizedBox(width: 12),
+        Card(
+          color: Colors.blue.withAlpha(26),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.blue.withAlpha(77), width: 1),
+          ),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                _showHumidity = !_showHumidity;
+              });
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(
+                    _showHumidity
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                    color: Colors.blue,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Humidité',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
