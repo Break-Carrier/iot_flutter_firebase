@@ -43,7 +43,19 @@ class SensorReadingService extends ChangeNotifier {
       _readingsSubscription =
           _firebaseService.getLatestEntriesStream(_path, limit).listen((event) {
         if (event.snapshot.exists) {
-          final data = event.snapshot.value as Map<String, dynamic>;
+          // Convertir le Map<Object?, Object?> en Map<String, dynamic> de façon sécurisée
+          final rawData = event.snapshot.value as Map<Object?, Object?>;
+          final Map<String, dynamic> data = {};
+
+          rawData.forEach((key, value) {
+            if (key is String && value is Map<Object?, Object?>) {
+              // Convertir les données internes pour chaque lecture
+              data[key] = Map<String, dynamic>.from(value.map(
+                (k, v) => MapEntry(k.toString(), v),
+              ));
+            }
+          });
+
           _processReadingsData(data);
         } else {
           debugPrint('⚠️ No sensor readings data available');

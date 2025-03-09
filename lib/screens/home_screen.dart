@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import '../widgets/current_state_widget.dart';
+import '../widgets/sensor_readings_chart.dart';
 import '../services/sensor_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: const [
                     CurrentStateWidget(),
-                    // D'autres widgets seront ajoutés ici
+                    SensorReadingsChart(),
                   ],
                 ),
               ),
